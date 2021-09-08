@@ -2,9 +2,12 @@ const p = require("puppeteer");
 const csv = require('csvtojson');
 const stringify = require("csv-stringify")
 const fs = require('fs');
-const { time } = require("console");
 
-const getnosurl = (geemente) => `https://app.nos.nl/op3/socialehuur/#/?gemeente=${geemente}`
+require('dotenv').config() // .env
+
+const { TARGET, INFILE, OUTFILE } = process.env
+
+const getnosurl = (geemente) => `${TARGET}${geemente}`
 
 const milltosecond = (s) => s * 1000
 
@@ -46,7 +49,7 @@ const runall = async (timeout) => {
 
     console.log("Start...")
 
-    let raw = fs.readFileSync("data.csv").toString()
+    let raw = fs.readFileSync(INFILE).toString()
 
     let cities = []
 
@@ -79,7 +82,7 @@ const runall = async (timeout) => {
 
     stringify(waitingtime, function(err, output) {
         fs.writeFile(
-            'out.csv', output, 'utf8', 
+            OUTFILE, output, 'utf8', 
             function(err) {
                 if (err) {
                     console.log('Some error occured - file either not saved or corrupted file saved.');
